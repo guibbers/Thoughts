@@ -1,5 +1,5 @@
 const express = require('express')
-const exphbs = require('express-handlebars')
+const { engine } = require('express-handlebars')
 const session = require('express-session')
 const FileStore = require('session-file-store')(session)
 const flash = require('express-flash')
@@ -7,22 +7,30 @@ const flash = require('express-flash')
 const app = express()
 
 const conn = require('./db/conn')
-const { nextTick } = require('process')
 
 // Models
 
 const Thought = require('./models/Thought')
 const User = require('./models/User')
 
+// Import Routes
+
+const thoughtsRoutes = require('./routes/thoughtsRoutes')
+
+// Import ThoughtController
+
+const ThoughtController = require('./controllers/ThoughtController')
+
 // template engine
-app.engine('handlebars', exphbs.engine())
+
+app.engine('handlebars', engine())
 app.set('view engine', 'handlebars')
 
 // receber resposta do body
 
 app.use(express.urlencoded({ extended: true }))
 
-app.use(express.json)
+app.use(express.json())
 
 // session middleware
 app.use(
@@ -51,18 +59,25 @@ app.use(flash())
 app.use(express.static('public'))
 
 // set session to res
-app.use((req, res) => {
+app.use((req, res, next) => {
   if (req.session.userid) {
     res.locals.session = req.session
   }
 
   next()
 })
+
+// Routes
+
+app.use('/thoughts', thoughtsRoutes)
+app.get('/', ThoughtController.showThoughts)
+
 conn
   // .sync({ force: true })
   .sync()
   .then(() => {
     app.listen(3000)
+    console.log('app running on port 3000')
   })
   .catch((err) => {
     console.log(`erro: ${err}`)
