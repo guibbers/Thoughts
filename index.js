@@ -9,8 +9,13 @@ const app = express()
 const conn = require('./db/conn')
 const { nextTick } = require('process')
 
+// Models
+
+const Thought = require('./models/Thought')
+const User = require('./models/User')
+
 // template engine
-app.engine('handlebars', exphbs())
+app.engine('handlebars', exphbs.engine())
 app.set('view engine', 'handlebars')
 
 // receber resposta do body
@@ -54,6 +59,7 @@ app.use((req, res) => {
   next()
 })
 conn
+  // .sync({ force: true })
   .sync()
   .then(() => {
     app.listen(3000)
