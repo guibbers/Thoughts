@@ -4,7 +4,15 @@ const User = require('../models/User')
 
 module.exports = class ThoughtController {
   static async showThoughts(req, res) {
-    res.render('thoughts/home')
+    const thoughtsData = Thought.findAll({
+      include: User,
+    })
+
+    const thoughts = (await thoughtsData).map((result) =>
+      result.get({ plain: true })
+    )
+
+    res.render('thoughts/home', { thoughts })
   }
 
   static async dashboard(req, res) {
