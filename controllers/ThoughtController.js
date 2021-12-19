@@ -12,11 +12,20 @@ module.exports = class ThoughtController {
       search = req.query.search
     }
 
+    let order = 'DESC'
+
+    if (req.query.order === 'old') {
+      order = 'ASC'
+    } else {
+      order = 'DESC'
+    }
+
     const thoughtsData = Thought.findAll({
       include: User,
       where: {
         title: { [Op.like]: `%${search}%` },
       },
+      order: [['createdAt', order]],
     })
 
     const thoughts = (await thoughtsData).map((result) =>
