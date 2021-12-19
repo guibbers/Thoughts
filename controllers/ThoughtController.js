@@ -22,8 +22,6 @@ module.exports = class ThoughtController {
 
     const thoughts = user.Thoughts.map((result) => result.dataValues)
 
-    console.log(thoughts)
-
     res.render('thoughts/dashboard', { thoughts })
   }
 
