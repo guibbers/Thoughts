@@ -12,6 +12,6 @@ module.exports = class ThoughtController {
   }
 
   static async createThought(req, res) {
-    res.render('/thoughts/create')
+    res.render('thoughts/create')
   }
 }
